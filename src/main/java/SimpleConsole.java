@@ -3,10 +3,9 @@ import dao.TransactionRecordDao;
 import dao.impl.SimpleCSVTransactionRecordDao;
 import model.Query;
 import model.balancecalculation.BalanceCalculateResult;
-import service.balancecalculation.SimpleBalanceCalculator;
+import service.balancecalculation.impl.SimpleBalanceCalculator;
 
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -44,9 +43,12 @@ public class SimpleConsole {
 
         if (resultList != null && !resultList.isEmpty()) {
             resultList.stream().forEach(result -> {
+                System.out.println("____________________________________________________________________");
                 System.out.println(result.getAccountId() + ":");
                 System.out.println(String.format("Relative balance for the period is: %s", currencyFormater.format(result.getBalance())));
                 System.out.println(String.format("Number of transactions included is: %d", result.getNumberOfRecords()));
+                System.out.println("____________________________________________________________________");
+
             });
         } else {
             System.out.println("No Record found");

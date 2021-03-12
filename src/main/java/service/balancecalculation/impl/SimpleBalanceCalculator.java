@@ -1,10 +1,11 @@
-package service.balancecalculation;
+package service.balancecalculation.impl;
 
 import dao.TransactionRecordDao;
 import model.Query;
 import model.balancecalculation.BalanceCalculateResult;
 import model.transactionrecord.TransactionRecord;
 import model.transactionrecord.TransactionType;
+import service.balancecalculation.AccountBalanceCalculator;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,8 +27,7 @@ public class SimpleBalanceCalculator implements AccountBalanceCalculator {
 
     /**
      * Calculate Account balance over the {@link TransactionRecord} data that meet the given query.
-     * by simple sum up Reversal and Payment records. And subtract total Payment amount by total
-     * Reversal amount
+     * By totalling the amount under each accountId
      *
      * @param query
      * @return
@@ -38,33 +38,21 @@ public class SimpleBalanceCalculator implements AccountBalanceCalculator {
         List<BalanceCalculateResult> accountBalanceResult = new ArrayList<>();
         accountTransactionRecords.entrySet().stream().forEach(accountTransactionSet -> {
 
-            BigDecimal totalPaymentAmount = getTotalValue(accountTransactionSet.getValue(), PAYMENT);
-            BigDecimal totalReverseAmount = getTotalValue(accountTransactionSet.getValue(), REVERSAL);
+        // Assume starting balance is always 0
+        BigDecimal startingBalance = BigDecimal.ZERO;
+
+        BigDecimal total = accountTransactionSet.getValue().stream()
+                    .map(TransactionRecord::getAmount)
+                    .reduce(BigDecimal::add)
+                    .orElse(BigDecimal.ZERO);
 
             accountBalanceResult.add(new BalanceCalculateResult(accountTransactionSet.getKey(),
-                    totalReverseAmount.subtract(totalPaymentAmount) , accountTransactionSet.getValue().size(), query.getDateRange()));
+                    startingBalance.subtract(total) , accountTransactionSet.getValue().size(), query.getDateRange()));
         });
 
         return accountBalanceResult;
     }
 
-    /**
-     * Return a total amount of given {@link TransactionType} from a Set of TransactionRecords. Return 0 if no
-     * {@link TransactionRecord} with givent {@link TransactionType} found.
-     *
-     *
-     * @param transactionRecords
-     * @param type
-     * @return
-     */
-    private BigDecimal getTotalValue (Set<TransactionRecord> transactionRecords, TransactionType type) {
-
-        return transactionRecords.stream()
-                .filter(transactionRecord -> transactionRecord.getTransactionType().equals(type))
-                .map(TransactionRecord::getAmount)
-                .reduce(BigDecimal::add)
-                .orElse(BigDecimal.ZERO);
-    }
 
 
 }

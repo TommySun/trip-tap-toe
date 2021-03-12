@@ -53,7 +53,7 @@ Number of transactions included is: 1
 
 ACC334455:
 Relative balance for the period is: -$32.25
-Number of transactions included is: 4
+Number of transactions included is: 2
 ```
 
 # Distribute 

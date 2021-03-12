@@ -9,11 +9,13 @@ import dao.DaoException;
 import model.Query;
 import model.transactionrecord.TransactionRecord;
 import dao.TransactionRecordDao;
+import model.transactionrecord.TransactionType;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,22 +33,9 @@ public class SimpleCSVTransactionRecordDao implements TransactionRecordDao {
 
     private final String FAILE_PARSE_FILE_ERROR_MESSAGE = "Failed to parse file [%s]";
 
-    private final String transactionDataFilePath;
+    private final Set<TransactionRecord> records;
 
     public SimpleCSVTransactionRecordDao(String transactionDataFilePath) {
-        this.transactionDataFilePath = transactionDataFilePath;
-    }
-
-
-    /**
-     * Return record
-     *
-     * @param query
-     * @return
-     */
-    @Override
-    public Map<String, Set<TransactionRecord>> getRecords(Query query) {
-
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.findAndRegisterModules();
         csvMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -57,9 +46,7 @@ public class SimpleCSVTransactionRecordDao implements TransactionRecordDao {
 
         try (Reader reader = new FileReader(transactionDataFilePath)) {
             MappingIterator<TransactionRecord> transactionRecordIterator = objectReader.readValues(reader);
-            return transactionRecordIterator.readAll().stream()
-                    .filter(transactionRecord -> isInclude(transactionRecord, query))
-                    .collect(Collectors.groupingBy(TransactionRecord::getFromAccountId, Collectors.toSet()));
+            records = new HashSet<>(transactionRecordIterator.readAll());
         } catch (FileNotFoundException e) {
             throw new DaoException(String.format(FILE_NOT_FOUND_ERROR_MESSAGE, transactionDataFilePath), e);
         } catch (IOException e) {
@@ -67,8 +54,23 @@ public class SimpleCSVTransactionRecordDao implements TransactionRecordDao {
         }
     }
 
+
     /**
-     * Return true if the {@link TransactionRecord} meet the criteria in given Query
+     * Return records grouped by the accountId that is meet the query criteria and include no matching reversal
+     *
+     * @param query
+     * @return
+     */
+    @Override
+    public Map<String, Set<TransactionRecord>> getRecords(Query query) {
+        return records.stream()
+                .filter(record -> !record.getTransactionType().equals(TransactionType.REVERSAL) && isInclude(record, query))
+                .collect(Collectors.groupingBy(TransactionRecord::getFromAccountId, Collectors.toSet()));
+    }
+
+    /**
+     * Return true if the {@link TransactionRecord} meet the criteria in given Query, and has no match reversal
+     * transaction
      *
      * @param record
      * @param query
@@ -77,7 +79,10 @@ public class SimpleCSVTransactionRecordDao implements TransactionRecordDao {
     private Boolean isInclude (TransactionRecord record, Query query) {
         return (query.getAccountIds() == null || query.getAccountIds().isEmpty() ||
                 query.getAccountIds().contains(record.getFromAccountId()))
-                && (query.getDateRange() == null || query.getDateRange().contains(record.getCreatedAt()));
+                && (query.getDateRange() == null || query.getDateRange().contains(record.getCreatedAt()))
+                &&
+                !records.stream()
+                        .anyMatch(otherRecord -> otherRecord.getRelatedTransaction().equals(record.getTransactionId()));
 
     }
 

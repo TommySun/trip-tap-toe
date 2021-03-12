@@ -4,7 +4,7 @@ import dao.impl.SimpleCSVTransactionRecordDao;
 import model.Query;
 import model.balancecalculation.BalanceCalculateResult;
 import org.junit.Test;
-import service.balancecalculation.SimpleBalanceCalculator;
+import service.balancecalculation.impl.SimpleBalanceCalculator;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -50,8 +50,8 @@ public class SimpleBalanceCalculatorTest {
         List<BalanceCalculateResult> resultList = calculator.calculateBalance(query);
         assertEquals(1, resultList.size());
         assertEquals("ACC334455", resultList.get(0).getAccountId());
-        assertEquals(Integer.valueOf(2), resultList.get(0).getNumberOfRecords());
-        assertEquals(0, BigDecimal.valueOf(-35.50d).compareTo(resultList.get(0).getBalance()));
+        assertEquals(Integer.valueOf(1), resultList.get(0).getNumberOfRecords());
+        assertEquals(0, BigDecimal.valueOf(-25.00d).compareTo(resultList.get(0).getBalance()));
     }
 
     /**
@@ -81,8 +81,8 @@ public class SimpleBalanceCalculatorTest {
 
         assertEquals(2, resultList.size());
         assertEquals("ACC334455", resultList.get(0).getAccountId());
-        assertEquals(Integer.valueOf(2), resultList.get(0).getNumberOfRecords());
-        assertEquals(0, BigDecimal.valueOf(-35.50d).compareTo(resultList.get(0).getBalance()));
+        assertEquals(Integer.valueOf(1), resultList.get(0).getNumberOfRecords());
+        assertEquals(0, BigDecimal.valueOf(-25.0d).compareTo(resultList.get(0).getBalance()));
 
         assertEquals("ACC998877", resultList.get(1).getAccountId());
         assertEquals(Integer.valueOf(1), resultList.get(1).getNumberOfRecords());
@@ -109,7 +109,7 @@ public class SimpleBalanceCalculatorTest {
 
         assertEquals(2, resultList.size());
         assertEquals("ACC334455", resultList.get(0).getAccountId());
-        assertEquals(Integer.valueOf(4), resultList.get(0).getNumberOfRecords());
+        assertEquals(Integer.valueOf(2), resultList.get(0).getNumberOfRecords());
         assertEquals(0, BigDecimal.valueOf(-32.25d).compareTo(resultList.get(0).getBalance()));
 
         assertEquals("ACC998877", resultList.get(1).getAccountId());
@@ -143,7 +143,7 @@ public class SimpleBalanceCalculatorTest {
         List<BalanceCalculateResult> resultList = calculator.calculateBalance(query);
         assertEquals(1, resultList.size());
         assertEquals("ACC334455", resultList.get(0).getAccountId());
-        assertEquals(Integer.valueOf(3), resultList.get(0).getNumberOfRecords());
+        assertEquals(Integer.valueOf(1), resultList.get(0).getNumberOfRecords());
         assertEquals(0, BigDecimal.valueOf(-7.25d).compareTo(resultList.get(0).getBalance()));
     }
 
