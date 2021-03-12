@@ -4,7 +4,6 @@ import dao.TransactionRecordDao;
 import model.Query;
 import model.balancecalculation.BalanceCalculateResult;
 import model.transactionrecord.TransactionRecord;
-import model.transactionrecord.TransactionType;
 import service.balancecalculation.AccountBalanceCalculator;
 
 import java.math.BigDecimal;
@@ -12,9 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static model.transactionrecord.TransactionType.PAYMENT;
-import static model.transactionrecord.TransactionType.REVERSAL;
 
 public class SimpleBalanceCalculator implements AccountBalanceCalculator {
 

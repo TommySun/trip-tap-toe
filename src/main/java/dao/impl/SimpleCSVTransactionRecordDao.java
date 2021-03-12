@@ -6,9 +6,9 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import dao.DaoException;
+import dao.TransactionRecordDao;
 import model.Query;
 import model.transactionrecord.TransactionRecord;
-import dao.TransactionRecordDao;
 import model.transactionrecord.TransactionType;
 
 import java.io.FileNotFoundException;
@@ -16,7 +16,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
