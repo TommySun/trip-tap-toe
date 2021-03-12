@@ -30,7 +30,7 @@ public class SimpleCSVTransactionRecordDao implements TransactionRecordDao {
 
     private final String FILE_NOT_FOUND_ERROR_MESSAGE = "Cannot find file [%s]";
 
-    private final String FAILE_PARSE_FILE_ERROR_MESSAGE = "Failed to parse file [%s]";
+    private final String FAILED_PARSE_FILE_ERROR_MESSAGE = "Failed to parse file [%s]";
 
     private final Set<TransactionRecord> records;
 
@@ -49,7 +49,7 @@ public class SimpleCSVTransactionRecordDao implements TransactionRecordDao {
         } catch (FileNotFoundException e) {
             throw new DaoException(String.format(FILE_NOT_FOUND_ERROR_MESSAGE, transactionDataFilePath), e);
         } catch (IOException e) {
-            throw new DaoException(String.format(FAILE_PARSE_FILE_ERROR_MESSAGE, transactionDataFilePath), e);
+            throw new DaoException(String.format(FAILED_PARSE_FILE_ERROR_MESSAGE, transactionDataFilePath), e);
         }
     }
 
