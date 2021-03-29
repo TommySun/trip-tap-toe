@@ -10,6 +10,10 @@ import java.time.Duration;
 
 import static model.trip.TripType.*;
 
+/**
+ * This class build a {@link Trip} object from two {@link Tap} objects. One for On and one for Off
+ *
+ */
 public class TripBuilder {
 
     private static final DecimalFormat currencyFormater = new DecimalFormat("$#,##0.00");
@@ -27,7 +31,11 @@ public class TripBuilder {
     }
 
 
-
+    /**
+     * Build the Trip object
+     *
+     * @return
+     */
     public Trip build () {
 
         Trip trip = new Trip();
@@ -42,7 +50,6 @@ public class TripBuilder {
             trip.setDurationInSec(Duration.between(onTap.getDateTimeUTC(), offTap.getDateTimeUTC()).getSeconds());
         }
 
-        // Amount
         trip.setChargeAmount(currencyFormater.format(tripChargeCalculator.calculateCharge (trip)));
 
         trip.setCompany(onTap.getCompanyId());
